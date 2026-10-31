@@ -1,17 +1,20 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: true, // Нужно для проброса порта из Docker
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://backend:8080', // Тут уже имя сервиса внутри сети Docker!
-        changeOrigin: true,
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+
+  return {
+    plugins: [react()],
+    server: {
+      host: true,
+      port: 5173,
+      proxy: {
+        '/api': {
+          target: env.BACKEND_URL || 'http://localhost:8080',
+          changeOrigin: true,
+        },
       },
     },
-  },
+  }
 })

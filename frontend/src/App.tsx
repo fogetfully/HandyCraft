@@ -10,12 +10,17 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
 
-  const API_URL = 'http://localhost:8080/api/messages';
+  const API_URL = '/api/messages';
 
   // 1. Получаем данные с Go-бэкенда (GET)
   useEffect(() => {
     fetch(API_URL)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`GET /api/messages failed: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data: Message[]) => setMessages(data))
       .catch((err) => console.error('Ошибка загрузки:', err));
   }, []);
@@ -32,11 +37,13 @@ function App() {
         body: JSON.stringify({ text: inputText }),
       });
 
-      if (response.ok) {
-        const createdMessage: Message = await response.json();
-        setMessages((prev) => [...prev, createdMessage]);
-        setInputText('');
+      if (!response.ok) {
+        throw new Error(`POST /api/messages failed: ${response.status}`);
       }
+
+      const createdMessage: Message = await response.json();
+      setMessages((prev) => [...prev, createdMessage]);
+      setInputText('');
     } catch (err) {
       console.error('Ошибка отправки:', err);
     }
