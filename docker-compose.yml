@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app # Проброс кода для hot-reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app # Проброс кода React
+      - /app/node_modules # Изолируем node_modules контейнера от хоста
+    depends_on:
+      - backend

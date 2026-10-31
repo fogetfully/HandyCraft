@@ -1,0 +1,19 @@
+# --- Go ---
+*.exe
+*.exe~
+*.dll
+*.test
+
+
+# --- React.js / Node.js ---
+node_modules/
+.npm
+
+
+# --- Логи и базы данных ---
+*.log
+npm-bedug.log*
+yarn-bedug.log*
+pnpm-bedug.log*
+lerna-bedug.log*
+*.bd
