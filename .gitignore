@@ -11,9 +11,13 @@ node_modules/
 
 
 # --- Логи и базы данных ---
+# --- Logs and Data Bases ---
 *.log
 npm-bedug.log*
 yarn-bedug.log*
 pnpm-bedug.log*
 lerna-bedug.log*
 *.bd
+
+# --- IDE ---
+.idea/
