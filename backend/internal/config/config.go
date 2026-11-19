@@ -1,3 +1,5 @@
+// Конфигурация сервера
+
 package config
 
 import "os"
@@ -12,7 +14,7 @@ func Must() Config {
 	//if addr == "" {
 	//	addr = ":8080"
 	//}
-	addr := ":8080"
+	addr := ":8080" // 8080 - порт backend, 3000 - frontend
 
 	databaseURL := os.Getenv("DATABASE_URL")
 
