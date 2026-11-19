@@ -1,19 +1,21 @@
+version: "2"
 
 linters:
-  disable-all: true
-
+  default: none
   enable:
     - errcheck
     - govet
     - ineffassign
     - staticcheck
 
-issues:
-  exclude-rules:
-    - source: "^// Code generated .* DO NOT EDIT\\.$"
-      linters:
-        - errcheck
-        - govet
-        - staticcheck
+  exclusions:
+    generated: disable
+    rules:
+      - source: "^// Code generated .* DO NOT EDIT\\.$"
+        linters:
+          - errcheck
+          - govet
+          - staticcheck
 
+issues:
   max-same-issues: 3
