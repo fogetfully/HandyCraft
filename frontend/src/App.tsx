@@ -1,75 +1,38 @@
-import { useEffect, useState } from 'react';
+import { Navigate, Route, Routes } from "react-router";
+import Header from "./components/Header";
 
-// Интерфейс один-в-один повторяет структуру Message из Go (с учетом json-тегов)
-interface Message {
-  id: number;
-  text: string;
-}
+import PostsPage from "./pages/PostsPage";
+import PostsDetailPage from "./pages/PostsDetailPage";
+import ChatsPage from "./pages/ChatsPage";
+import ChatDetailPage from "./pages/ChatDetailPage";
+import ProfilePage from "./pages/ProfilePage";
+import AddPostPage from "./pages/AddPostPage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+
 
 function App() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputText, setInputText] = useState('');
 
-  const API_URL = '/api/messages';
-
-  // 1. Получаем данные с Go-бэкенда (GET)
-  useEffect(() => {
-    fetch(API_URL)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`GET /api/messages failed: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data: Message[]) => setMessages(data))
-      .catch((err) => console.error('Ошибка загрузки:', err));
-  }, []);
-
-  // 2. Отправляем данные на Go-бэкенд (POST)
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputText.trim()) return;
-
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: inputText }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`POST /api/messages failed: ${response.status}`);
-      }
-
-      const createdMessage: Message = await response.json();
-      setMessages((prev) => [...prev, createdMessage]);
-      setInputText('');
-    } catch (err) {
-      console.error('Ошибка отправки:', err);
-    }
-  };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h2>Тест связки React (TS) + Go</h2>
+    <div>
+      <Header/>
+      <Routes>
 
-      <ul>
-        {messages.map((msg) => (
-          <li key={msg.id}>
-            <strong>#{msg.id}:</strong> {msg.text}
-          </li>
-        ))}
-      </ul>
+          <Route path={"/"} element={<Navigate to={"/posts"} replace />} />
+          <Route path={"posts"} element={< PostsPage />} />
+          <Route path={"posts/:id"} element={< PostsDetailPage />} />
+          <Route path={"chats"} element={< ChatsPage />} />
+          <Route path={"chats/:id"} element={< ChatDetailPage />} />
+          <Route path={"profile"} element={< ProfilePage />} />
+          <Route path={"add-post"} element={< AddPostPage />} />
 
-      <form onSubmit={sendMessage} style={{ display: 'flex', gap: '8px' }}>
-        <input
-          type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="Напиши что-нибудь для Go..."
-        />
-        <button type="submit">Отправить на бэк</button>
-      </form>
+          <Route path={"register"} element={< RegisterPage />} />
+          <Route path={"login"} element={< LoginPage />} />
+
+          <Route path={"*"} element={<h2>Not found!</h2>} />
+
+      </Routes>
     </div>
   );
 }
