@@ -24,7 +24,7 @@ export default function PostList({ posts }: PostListProps) {
     const columns: Post[][] = splitByCount(posts, columnCount);
 
     return (
-        <div className="post-column">
+        <div className="post-list">
             {columns.map((column) => (
                 <PostColumn
                     column ={ column }

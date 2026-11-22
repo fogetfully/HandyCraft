@@ -7,10 +7,13 @@ type PostCardProps = {
 export default function PostCard({ post }: PostCardProps) {
     return (
         <div className="post-card">
+            <p>{post.type}</p>
             <h2>{post.title}</h2>
             <p>{post.description}</p>
-            <p>Likes: {post.likesCount}</p>
-            <p>Comments: {post.commentsCount}</p>
+            <div className="line">
+                <p>Likes: {post.likesCount}</p>
+                <p>Comments: {post.commentsCount}</p>
+            </div>
         </div>
     )
 }

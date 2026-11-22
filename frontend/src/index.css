@@ -65,23 +65,36 @@ p {
   margin: 0;
 }
 
-.header{
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 30px;
   border-bottom: 1px solid var(--border);
 }
+
 .post-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 32px;
+  justify-content: center;
 }
+
 .post-column {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 400px;
+  /* margin: 0 auto; */
 }
+
 .post-card {
   display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  /* margin: 20px; */
+}
+
+.line p {
+  display: inline;
 }
