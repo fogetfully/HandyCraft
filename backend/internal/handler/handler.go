@@ -34,13 +34,19 @@ func RegisterRoutes(
 		cfg: cfg,
 	}
 
-	apiV1 := router.Group("/api/v1")
-	auth := apiV1.Group("/auth")
-	users := apiV1.Group("/users")
-	posts := apiV1.Group("/posts")
-	comments := apiV1.Group("/comments")
-	dialogs := apiV1.Group("/dialogs")
-	reviews := apiV1.Group("/reviews")
+	// версии API. можем добавть сколько угодно, затем нужную версию сделать активной через apiVersion := нужная версия
+	apiV1 := router.Group("/api/v1") // v1 - версия API
+
+	// активная версия API (к ней привязываются все роуты)
+	apiVersion := apiV1 // здесь можно поменять версию на нужную, чтобы у каждого роута не менять версию отдельно
+
+	// группы роутов
+	auth := apiVersion.Group("/auth")
+	users := apiVersion.Group("/users")
+	posts := apiVersion.Group("/posts")
+	comments := apiVersion.Group("/comments")
+	dialogs := apiVersion.Group("/dialogs")
+	reviews := apiVersion.Group("/reviews")
 	//images := api.Group("/images")
 
 	// Routes - подробные описание каждого смотри в контракте
@@ -66,7 +72,7 @@ func RegisterRoutes(
 	// GET /users/{userID}/reviews - роут в группе Reviews
 
 	// Images
-	apiV1.POST("/images", notImplemented) // Загрузка изображения - Единственный способ загрузить файл. Возвращённый id затем указывается в avatarId, imageIds публикации или сообщения. Допустимые форматы: JPEG, PNG, WebP; не более 10 МБ. Изображения, не прикреплённые ни к чему в течение суток, удаляются сервером.
+	apiVersion.POST("/images", notImplemented) // Загрузка изображения - Единственный способ загрузить файл. Возвращённый id затем указывается в avatarId, imageIds публикации или сообщения. Допустимые форматы: JPEG, PNG, WebP; не более 10 МБ. Изображения, не прикреплённые ни к чему в течение суток, удаляются сервером.
 
 	// Posts
 	posts.GET("", h.listPublications)
@@ -102,7 +108,7 @@ func RegisterRoutes(
 	reviews.DELETE("/:reviewId", notImplemented)       // Удаление отзыва (автор или админ)
 
 	// Realtime
-	apiV1.GET("/events", notImplemented) // Поток событий реального времени (SSE) - Долгоживущее соединение text/event-stream. Одно соединение на вкладку, события только для текущего пользователя [...]
+	apiVersion.GET("/events", notImplemented) // Поток событий реального времени (SSE) - Долгоживущее соединение text/event-stream. Одно соединение на вкладку, события только для текущего пользователя [...]
 }
 
 // health - состояние сервиса
