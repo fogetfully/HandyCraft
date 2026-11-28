@@ -1,18 +1,60 @@
 services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      # Credentials for local development only.
+      POSTGRES_USER: handycraft
+      POSTGRES_PASSWORD: handycraft_dev
+      POSTGRES_DB: handycraft
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U handycraft -d handycraft"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  migrate:
+    image: migrate/migrate:v4.20.1
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend/migrations:/migrations:ro
+    entrypoint:
+      - migrate
+      - -path=/migrations
+      - -database=postgres://handycraft:handycraft_dev@db:5432/handycraft?sslmode=disable
+    command: ["up"]
+    restart: "no"
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
     ports:
-      - "8080:8080"
+      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
+    environment:
+      DATABASE_URL: postgres://handycraft:handycraft_dev@db:5432/handycraft?sslmode=disable
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "5173:5173"
+      - "127.0.0.1:${FRONTEND_PORT:-5173}:5173"
     environment:
       BACKEND_URL: http://backend:8080
     depends_on:
       - backend
+
+volumes:
+  postgres_data:

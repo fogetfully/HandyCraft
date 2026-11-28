@@ -25,22 +25,17 @@ CREATE TABLE "Users" (
 CREATE TABLE "Posts" (
 	"PostID" serial NOT NULL,
 	"AuthorID" int NOT NULL,
-	-- idea/order/product
 	"Type" varchar(20) NOT NULL CHECK("Type" IN ('idea', 'order', 'product')),
 	"Title" varchar(100),
 	"Description" text,
 	"LikesCount" int NOT NULL DEFAULT 0 CHECK("LikesCount" >= 0),
 	"CommentsCount" int NOT NULL DEFAULT 0 CHECK("CommentsCount" >= 0),
-	-- Три статуса: draft, active, archived
 	"Status" varchar(20) NOT NULL DEFAULT 'active' CHECK("Status" IN ('active', 'draft', 'archived')),
 	"created" timestamp NOT NULL,
 	"updated" timestamp,
 	"deleted" timestamp,
 	PRIMARY KEY("PostID")
 );
-
-COMMENT ON COLUMN "Posts"."Type" IS 'idea/order/product';
-COMMENT ON COLUMN "Posts"."Status" IS 'Три статуса: draft, active, archived';
 
 CREATE TABLE "Products" (
 	"PostID" int NOT NULL,
@@ -66,8 +61,6 @@ CREATE TABLE "Dialogs" (
 	PRIMARY KEY("DialogID"),
 	CONSTRAINT "UNIQUE (PostID, InitiatorID)" UNIQUE ("PostID", "InitiatorID")
 );
-
-COMMENT ON COLUMN "Dialogs"."InitiatorID" IS 'мастер или покупатель';
 
 CREATE TABLE "Messages" (
 	"MessageID" serial NOT NULL,
