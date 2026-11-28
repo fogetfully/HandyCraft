@@ -1,0 +1,30 @@
+# Isolated, disposable database: no host ports, persistent volumes or app services.
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: migration_test
+      POSTGRES_PASSWORD: migration_test
+      POSTGRES_DB: handycraft_migration_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U migration_test -d handycraft_migration_test"]
+      interval: 1s
+      timeout: 5s
+      retries: 60
+    volumes:
+      - ./migrations/tests:/tests:ro
+
+  migrate:
+    image: migrate/migrate:v4.20.1
+    profiles: [tools]
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations:ro
+    entrypoint:
+      - migrate
+      - -path=/migrations
+      - -database=postgres://migration_test:migration_test@db:5432/handycraft_migration_test?sslmode=disable
